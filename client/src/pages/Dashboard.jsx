@@ -6,6 +6,7 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import Index from '.';
 import Tenants from './Tenants';
 import Rooms from './Rooms';
+import Bookings from './Bookings';
 
 const Dashboard = () => {
     const [allowed,setAllowed] = useState();
@@ -39,12 +40,16 @@ const Dashboard = () => {
         <Tabs>
   <TabList>
     <Tab>Dashboard</Tab>
+    <Tab>Bookings</Tab>
     <Tab>Tenants</Tab>
     <Tab>Rooms</Tab>
   </TabList>
   <TabPanels>
     <TabPanel>
       <Index/>
+    </TabPanel>
+    <TabPanel>
+      <Bookings/>
     </TabPanel>
     <TabPanel>
      <Tenants/>

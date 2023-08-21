@@ -13,7 +13,7 @@ const app = express()
 app.use(express.json())
 app.use(cors({
     origin:["http://localhost:5173"],
-    methods:['GET','POST'],
+    methods:['GET','POST','DELETE','PUT'],
     credentials:true
 }))
 app.use(cookieParser())
@@ -100,34 +100,43 @@ app.post('/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ status: 'ok' });
 });
-
-app.post('/addbooking', verifyUser, async (req, res) => {
+app.get('/getbookings', verifyUser, async (req, res) => {
   try {
-    const { checkindate, checkoutdate, sharingtype, price, withFood } = req.body;
-
-    // Get the user's ID from the decoded token
-    const token = req.cookies.token;
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decodedToken.email;
-
-    // Create a new booking details entry
-    const bookingDetails = await BookingDetails.create({
-      user: userId,
-      checkindate,
-      checkoutdate,
-      sharingtype,
-      price,
-      withFood,
-    });
-    const user = await BookingModel.findOne({ email: userId });
-    user.bookingDetails.push(bookingDetails._id);
-    await user.save();
-
-    res.json({ status: 'ok', bookingDetails });
+    const bookings = await BookingModel.find().select('-password');
+    res.json(bookings);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json(error);
   }
 });
+app.get('/getbooking/:id', verifyUser, async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const booking = await BookingModel.findById(bookingId).select('-password');
+    res.json(booking);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+app.delete('/deletebooking/:id', verifyUser, async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    await BookingModel.findByIdAndDelete(bookingId);
+    res.json({ message: 'Booking deleted successfully' });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+app.put('/updatebooking/:id', verifyUser, async (req, res) => {
+  try {
+    const bookingId = req.params.id; // Use 'id' instead of '_id'
+    const updatedBooking = req.body;
+    await BookingModel.findByIdAndUpdate(bookingId, updatedBooking);
+    res.json({ status: 'ok' });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 app.listen(5000,()=>{
     console.log('Everything running fine')
 })

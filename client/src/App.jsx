@@ -8,9 +8,11 @@ import Dashboard from './pages/Dashboard'
 import Navbar from './components/Navbar'
 import Tenant from './pages/Tenant'
 import Booking from './pages/Booking'
+import AddEditBooking from './pages/AddEditBooking'
 
 
 function App() {
+  
   return (
   <>
    <Navbar/>
@@ -21,6 +23,8 @@ function App() {
     <Route path='/dashboard' element={<Dashboard/>}/>
     <Route path='/tenant' element={<Tenant/>}/>
     <Route path='/booking' element={<Booking/>}/>
+    <Route path='/addeditbooking:id' element={<AddEditBooking  />}/>
+  
   </Routes>
   </>
   )
